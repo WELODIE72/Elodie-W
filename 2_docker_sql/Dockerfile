@@ -10,5 +10,5 @@ WORKDIR /app
 # Copier le script pipeline.py dans le répertoire de travail
 COPY pipeline.py pipeline.py
 
-# Définir l'entrypoint sur bash pour interagir avec le conteneur
-ENTRYPOINT [ "bash" ]
+# Définir l'entrypoint sur pour interagir avec le conteneur et fixe le comportement par défaut
+ENTRYPOINT [ "python", "pipeline.py" ]
