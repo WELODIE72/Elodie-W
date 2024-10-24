@@ -16,6 +16,7 @@ git push -u origin main
 ## 1.1 Introduction to Docker
 
 ### 1.1.1 Commande pour exécuter un conteneur PostgreSQL 16 avec Docker
+
 docker run -it \
   -e POSTGRES_USER="root" \
   -e POSTGRES_PASSWORD="root" \
@@ -24,58 +25,56 @@ docker run -it \
   -p 5432:5432 \
   postgres:16
 
-#### Explication des options :
-##### -it : 
-Exécute le conteneur en mode interactif avec un terminal.
-##### -e POSTGRES_USER="root" : 
-Définit l'utilisateur PostgreSQL sur "root".
-##### -e POSTGRES_PASSWORD="root" : 
-Définit le mot de passe pour l'utilisateur PostgreSQL.
-##### -e POSTGRES_DB="ny_taxi" : 
-Crée une base de données nommée "ny_taxi".
-##### -v $(pwd)/ny_taxi_postgres_data:/var/lib/postgresql/data : 
-Monte le répertoire local ny_taxi_postgres_data pour conserver les données de PostgreSQL.
-##### -p 5432:5432 :
-Mappe le port 5432 de l'hôte au port 5432 dans le conteneur.
-##### postgres:16 : 
-Spécifie l'image à utiliser (PostgreSQL version 16).
+####  Explication des options :
+-it : Exécute le conteneur en mode interactif avec un terminal.
+
+-e POSTGRES_USER="root" : Définit l'utilisateur PostgreSQL sur "root".
+
+-e POSTGRES_PASSWORD="root" : Définit le mot de passe pour l'utilisateur PostgreSQL.
+
+-e POSTGRES_DB="ny_taxi" : Crée une base de données nommée "ny_taxi".
+
+-v $(pwd)/ny_taxi_postgres_data:/var/lib/postgresql/data : Monte le répertoire local ny_taxi_postgres_data pour conserver les données de PostgreSQL.
+
+-p 5432:5432 : Mappe le port 5432 de l'hôte au port 5432 dans le conteneur.
+postgres:16 : Spécifie l'image à utiliser (PostgreSQL version 16).
 
 
-### ATTENTION  le port 5432 étant utilisé, nous allons chercher à savoir quel processus utilise le port 5432 (ou tout autre port) 
+###  ATTENTION  Si le port 5432 est utilisé, nous allons chercher à savoir quel processus utilise le port 5432 (ou tout autre port) 
 
-    #### Commandes pour vérifier quel processus occupe un port spécifique comme le 5432:
-    ##### a. Avec lsof (List Open Files) :
+  ####  Commandes pour vérifier quel processus occupe un port spécifique comme le 5432:
+  #####  a. Avec lsof (List Open Files) :
         sudo lsof -i :5432
-    Cette commande liste tous les processus utilisant le port 5432. Elle affichera le PID (Process ID) ainsi que des informations sur le processus
+  Cette commande liste tous les processus utilisant le port 5432. Elle affichera le PID (Process ID) ainsi que des informations sur le processus
 
-    ##### b. Avec netstat :
+  ##### b. Avec netstat :
         sudo netstat -tuln | grep 5432
-    (Cette commande affiche les services en cours d'exécution sur le port 5432. Si PostgreSQL ou un autre service est actif, vous verrez une ligne correspondante.)
+  Cette commande affiche les services en cours d'exécution sur le port 5432. Si PostgreSQL ou un autre service est actif, vous verrez une ligne correspondante.
 
-    #### Si vous utilisez Docker
-    ##### Vous pouvez lister les conteneurs en cours d'exécution et voir les ports qu'ils utilisent comme suit :
+  #### Si vous utilisez Docker
+  ##### Vous pouvez lister les conteneurs en cours d'exécution et voir les ports qu'ils utilisent comme suit :
         docker ps
-    Cela affichera tous les conteneurs en cours d'exécution et les ports qu'ils exposent. Vous pourrez ainsi identifier si l'un de vos conteneurs utilise le port 5432.
+  Cela affichera tous les conteneurs en cours d'exécution et les ports qu'ils exposent. Vous pourrez ainsi identifier si l'un de vos conteneurs utilise le port 5432.
 
-    ##### Pour arrêter le processus utilisant le port
+  ##### Pour arrêter le processus utilisant le port
         sudo kill <PID>
-    Cela vous permettra de libérer le port 5432 si nécessaire.
+  Cela vous permettra de libérer le port 5432 si nécessaire.
 
-    #### Résultats :
+  #### Résultats :
     (base) ... % sudo lsof -i :5432
     Password:
     COMMAND  PID     USER   FD   TYPE             DEVICE SIZE/OFF NODE NAME
     postgres 346 postgres    7u  IPv6 0x9920b939b1bf2e9d      0t0  TCP *:postgresql (LISTEN)
     postgres 346 postgres    8u  IPv4 0x9920b934e67ac145      0t0  TCP *:postgresql (LISTEN)
 
-    #### Explication des options :
-    Le résultat de la commande montre que le processus postgres utilise le port 5432 pour écouter à la fois sur les adresses IPv6 et IPv4. Le PID du processus est 346, et il est exécuté par l'utilisateur postgres.
+  #### Explication des options :
+  Le résultat de la commande montre que le processus postgres utilise le port 5432 pour écouter à la fois sur les adresses IPv6 et IPv4. Le PID du processus est 346, et il est exécuté par l'utilisateur postgres.
 
-    ##### Pour libérer le port 5432 en arrêtant le service PostgreSQL en cours si non besoin :
-    ##### Sous macOS, si PostgreSQL est exécuté via Homebrew, vous pouvez arrêter le service avec :
+  ##### Pour libérer le port 5432 en arrêtant le service PostgreSQL en cours si non besoin :
+  ##### Sous macOS, si PostgreSQL est exécuté via Homebrew, vous pouvez arrêter le service avec :
         brew services stop postgresql
-    ##### Tuer le processus : Si PostgreSQL tourne dans un conteneur Docker (ou pour le faire manuellement)
-    Utilisez la commande kill pour terminer le processus avec le PID que vous avez obtenu (ici 346) :
+  ##### Tuer le processus : Si PostgreSQL tourne dans un conteneur Docker (ou pour le faire manuellement)
+  Utilisez la commande kill pour terminer le processus avec le PID que vous avez obtenu (ici 346) :
         sudo kill 346
 
 
